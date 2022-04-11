@@ -4,24 +4,26 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "example" {
   name     = "example"
-  location = "East US 2"
+  location = "eastus"
 }
 
 module "network" {
   source              = "Azure/network/azurerm"
   resource_group_name = azurerm_resource_group.example.name
-  address_space       = "10.0.0.0/16"
-  subnet_prefixes     = ["10.0.1.0/24"]
+  address_space       = "10.1.0.0/16"
+  subnet_prefixes     = ["10.1.0.0/24"]
   subnet_names        = ["subnet1"]
   depends_on          = [azurerm_resource_group.example]
 }
 data "azuread_group" "aks_cluster_admins" {
-  name = "AKS-cluster-admins"
+  display_name = "AKS-cluster-admins"
 }
 
 module "aks" {
   source                           = "Azure/aks/azurerm"
   resource_group_name              = azurerm_resource_group.example.name
+  # client_id                        = c3cd40f5-1172-4c42-8f94-c9f0f17d905e
+  # client_secret                    = f89c1747-bb7c-4a1b-8b88-d5a0466ba7ec
   kubernetes_version               = "1.21.7"
   orchestrator_version             = "1.21.7"
   prefix                           = "prefix"
@@ -37,7 +39,7 @@ module "aks" {
   enable_http_application_routing  = true
   enable_azure_policy              = true
   enable_auto_scaling              = true
-  enable_host_encryption           = true
+  enable_host_encryption           = false
   agents_min_count                 = 1
   agents_max_count                 = 2
   agents_count                     = null # Please set `agents_count` `null` while `enable_auto_scaling` is `true` to avoid possible `agents_count` changes.
@@ -56,7 +58,7 @@ module "aks" {
 
   enable_ingress_application_gateway = true
   ingress_application_gateway_name = "aks-agw"
-  ingress_application_gateway_subnet_cidr = "10.52.1.0/24"
+  ingress_application_gateway_subnet_cidr = "10.1.1.0/24"
 
   network_policy                 = "azure"
   net_profile_dns_service_ip     = "10.0.0.10"
