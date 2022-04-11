@@ -22,8 +22,8 @@ data "azuread_group" "aks_cluster_admins" {
 module "aks" {
   source                           = "Azure/aks/azurerm"
   resource_group_name              = azurerm_resource_group.example.name
-  kubernetes_version               = "1.19.3"
-  orchestrator_version             = "1.19.3"
+  kubernetes_version               = "1.21.7"
+  orchestrator_version             = "1.21.7"
   prefix                           = "prefix"
   cluster_name                     = "cluster-name"
   network_plugin                   = "azure"
